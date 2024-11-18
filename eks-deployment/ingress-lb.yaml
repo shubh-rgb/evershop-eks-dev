@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: evershop-ingress
+  annotations:
+    # Specify the ALB ingress controller for managing the traffic routing
+    kubernetes.io/ingress.class: alb
+    # Target group attributes for routing to the appropriate service
+    alb.ingress.kubernetes.io/target-group-arn: arn:aws:elasticloadbalancing:region:account-id:targetgroup/evershop-lb-tg/target-group-id
+spec:
+  rules:
+  - host: evershop.example.com  # This would be your domain name for the service
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: evershop-service
+            port:
+              number: 80
