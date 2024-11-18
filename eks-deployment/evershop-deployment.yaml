@@ -1,0 +1,54 @@
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evershop
+
+---
+
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evershop-app
+  namespace: evershop  # Specify your namespace here
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: evershop
+  template:
+    metadata:
+      labels:
+        app: evershop
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - evershop
+      containers:
+        - name: evershop-app
+          image: shubh301/my-evershop-image:v1  # docker hub image
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: "postgres-service"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "postgres"
+            - name: DB_NAME
+              value: "postgres"
+          resources:
+            requests:
+              memory: "512Mi"      # Minimum memory requested
+              cpu: "500m"          # Minimum CPU requested
+            limits:
+              memory: "1Gi"        # Maximum memory allowed
+              cpu: "1"             # Maximum CPU allowed
