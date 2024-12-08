@@ -1,0 +1,47 @@
+#evershop service
+apiVersion: v1
+kind: Service
+metadata:
+  name: evershop-service
+  namespace: evershop  # Specify your namespace here
+spec:
+  selector:
+    app: evershop
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+# ---
+# #postgres service
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres-service
+#   namespace: evershop  # Specify your namespace here
+# spec:
+#   selector:
+#     app: postgres
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
+#   type: ClusterIP
+# ---
+
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: allow-pod-to-pod-communication
+#   namespace: evershop
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: evershop
+#   policyTypes:
+#   - Ingress
+#   ingress:
+#   - from:
+#     - podSelector:
+#         matchLabels:
+#           app: evershop

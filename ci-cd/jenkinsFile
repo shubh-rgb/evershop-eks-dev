@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // Jenkins Docker Hub credentials ID
         AWS_CREDENTIALS_ID = 'aws-credentials' // Jenkins AWS credentials ID
-        DOCKER_IMAGE = 'shubh301/my-evershop-image:v1' // Docker Hub image
-        KUBECONFIG = '/home/jenkins/.kube/config' // Path to kubeconfig file
-        K8S_NAMESPACE = 'evershop' // Kubernetes namespace
-        DEPLOYMENT_NAME = 'evershop-deployment:v1' // Kubernetes deployment name
+        HELM_RELEASE_NAME = 'evershop-app'     // Helm release name for the app
+        HELM_CHART_PATH = './evershop-app-helm-chart'     // Path to the Helm chart for the app
+        POSTGRES_HELM_RELEASE = 'postgres'    // Helm release name for Postgres
+        POSTGRES_CHART_PATH = './postgres-helm-chart' // Path to Postgres Helm chart
+        K8S_NAMESPACE = 'evershop'            // Kubernetes namespace
     }
 
     stages {

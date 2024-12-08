@@ -9,7 +9,7 @@ spec:
     kind: Deployment
     name: evershop-app  # Must match the name of your deployment
   minReplicas: 1          # Minimum number of replicas
-  maxReplicas: 2         # Maximum number of replicas
+  maxReplicas: 5         # Maximum number of replicas
   metrics:
   - type: Resource
     resource:
