@@ -10,8 +10,13 @@ pipeline {
         K8S_NAMESPACE = 'evershop'            // Kubernetes namespace
     }
 
+    triggers {
+        // Trigger pipeline only for pull requests to main branch
+        githubPush() // Trigger for GitHub push events
+        // Alternatively, use PR trigger based on specific events
+    }
+
     stages {
-        stages {
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '*/development']], extensions: [], userRemoteConfigs: [[credentialsId: 'evershop-eks-repo-github-token', url: 'https://github.com/shubh-rgb/evershop-eks-dev.git']])
@@ -62,17 +67,17 @@ pipeline {
                 // Deploy to Kubernetes with rolling update
                 script {
                     try {
-                        // Update the deployment image and perform a rolling update
+                        // Update the deployment image and perform a rolling update using Helm for the app and Postgres
                         sh '''
-                        kubectl set image deployment/$DEPLOYMENT_NAME -n $K8S_NAMESPACE app-container=$DOCKER_IMAGE --record
-                        kubectl rollout status deployment/$DEPLOYMENT_NAME -n $K8S_NAMESPACE
+                        helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_PATH --namespace $K8S_NAMESPACE
+                        helm upgrade --install $POSTGRES_HELM_RELEASE $POSTGRES_CHART_PATH --namespace $K8S_NAMESPACE
                         '''
                     } catch (Exception e) {
                         // Rollback if deployment fails
                         echo 'Deployment failed, rolling back...'
                         sh '''
-                        kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $K8S_NAMESPACE
-                        kubectl rollout status deployment/$DEPLOYMENT_NAME -n $K8S_NAMESPACE
+                        helm rollback $HELM_RELEASE_NAME --namespace $K8S_NAMESPACE
+                        helm rollback $POSTGRES_HELM_RELEASE --namespace $K8S_NAMESPACE
                         '''
                         throw e  // Re-throw the exception to mark the build as failed
                     }
