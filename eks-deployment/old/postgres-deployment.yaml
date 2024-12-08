@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  namespace: evershop
+spec:
+  replicas: 1  # Deploy 1 pods
+  selector:
+    matchLabels:
+      app: evershop
+  template:
+    metadata:
+      labels:
+        env: production
+        app: evershop
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        ports:
+            - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        - name: POSTGRES_DB
+          value: "postgres"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: postgres-storage-new
+        persistentVolumeClaim:
+           claimName: postgres-pvc-new2
