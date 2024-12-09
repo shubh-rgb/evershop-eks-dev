@@ -43,6 +43,8 @@ pipeline {
                     try {
                         // Update the deployment image and perform a rolling update using Helm for the app and Postgres
                         sh '''
+                        kubectl config current-context
+                        kubectl config get-contexts
                         helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_PATH --namespace $K8S_NAMESPACE
                         helm upgrade --install $POSTGRES_HELM_RELEASE $POSTGRES_CHART_PATH --namespace $K8S_NAMESPACE
                         '''
