@@ -1,0 +1,17 @@
+prometheus:
+  image: prom/prometheus:latest
+  port: 9090
+
+grafana:
+  image: grafana/grafana:latest
+  port: 3000
+  adminUser: admin
+  adminPassword: admin
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
