@@ -19,8 +19,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub repository for PR to 'main' branch
-                checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[credentialsId: 'evershop-eks-repo-github-token', url: 'https://github.com/shubh-rgb/evershop-eks-dev.git']])
+                // Checkout code from GitHub repository for PR to '*/main' branch
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'evershop-eks-repo-github-token', url: 'https://github.com/shubh-rgb/evershop-eks-dev.git']])
             }
         }
 
@@ -32,6 +32,7 @@ pipeline {
                     sh '''
                     aws eks --region ap-south-1 update-kubeconfig --name evershop-eks-cluster
                     export KUBECONFIG=$HOME/.kube/config
+                    kubectl get pods -n evershop
                     '''
                 }
 
