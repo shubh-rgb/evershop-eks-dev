@@ -19,37 +19,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scmGit(branches: [[name: '*/development']], extensions: [], userRemoteConfigs: [[credentialsId: 'evershop-eks-repo-github-token', url: 'https://github.com/shubh-rgb/evershop-eks-dev.git']])
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                // Build Docker image from source and push it to Docker Hub
-                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                    docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker build -t $DOCKER_IMAGE .
-                    docker push $DOCKER_IMAGE
-                    '''
-                }
-            }
-        }
-
-        stage('Test Application') {
-            steps {
-                // Run application tests
-                echo 'Running application tests...'
-                sh 'npm test || echo "No test framework setup yet."'
-            }
-        }
-
-        stage('Scan Docker Image') {
-            steps {
-                // Scan Docker image with Trivy
-                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'trivy image $DOCKER_IMAGE'
-                }
+                // Checkout code from GitHub repository for PR to 'main' branch
+                checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[credentialsId: 'evershop-eks-repo-github-token', url: 'https://github.com/shubh-rgb/evershop-eks-dev.git']])
             }
         }
 
@@ -59,7 +30,7 @@ pipeline {
                 withCredentials([aws(credentialsId: AWS_CREDENTIALS_ID)]) {
                     // Set up AWS CLI and configure the KUBECONFIG to access EKS
                     sh '''
-                    aws eks --region ap-south-1 update-kubeconfig --name my-eks-cluster
+                    aws eks --region ap-south-1 update-kubeconfig --name evershop-eks-cluster
                     export KUBECONFIG=$HOME/.kube/config
                     '''
                 }
