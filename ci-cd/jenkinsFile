@@ -11,7 +11,7 @@ pipeline {
     }
 
     triggers {
-        // Trigger pipeline only for pull requests to main branch
+        // Trigger pipeline only for pull requests to main branch - testing
         githubPush() // Trigger for GitHub push events
         // Alternatively, use PR trigger based on specific events
     }
@@ -33,6 +33,7 @@ pipeline {
                     aws eks --region ap-south-1 update-kubeconfig --name evershop-eks-cluster
                     export KUBECONFIG=$HOME/.kube/config
                     kubectl get pods -n evershop
+                    kubectl get svc -n evershop
                     '''
                 }
 
