@@ -31,6 +31,7 @@ pipeline {
                     // Set up AWS CLI and configure the KUBECONFIG to access EKS
                     sh '''
                     aws eks --region ap-south-1 update-kubeconfig --name evershop-eks-cluster
+                    whoami
                     export KUBECONFIG=$HOME/.kube/config
                     kubectl get pods -n evershop
                     kubectl get svc -n evershop
